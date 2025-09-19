@@ -1,7 +1,7 @@
 import com.github.gekomad.ittocsv.core.ToCsv
 import com.github.gekomad.ittocsv.core.ToCsv.{given, *}
 import com.github.gekomad.ittocsv.core.Types.implicits.*
-import com.github.gekomad.ittocsv.parser.{IttoCSVFormat, StringToCsvField}
+import com.github.gekomad.ittocsv.parser.IttoCSVFormat
 
 import java.time.format.DateTimeFormatter
 import java.time.*

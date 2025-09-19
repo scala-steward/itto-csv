@@ -242,7 +242,8 @@ object FromCsv:
           tokenizeCsvLine(row) match
             case None => Left(List(s"$csvList is not a valid csv string"))
             case Some(t) =>
-              list2Product[A](t).match
+              val y = if (csvFormat.trim) t.map(_.trim) else t
+              list2Product[A](y).match
                 case Right(a) => Right(a)
                 case Left(a)  => Left(a)
       }

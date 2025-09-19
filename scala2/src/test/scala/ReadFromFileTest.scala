@@ -13,7 +13,7 @@ class ReadFromFileTest extends munit.FunSuite {
   test("read from file") {
 
     import com.github.gekomad.ittocsv.parser.io.FromFile.csvFromFileUnsafe
-    implicit val csvFormat = com.github.gekomad.ittocsv.parser.IttoCSVFormat.tab
+    implicit val csvFormat = com.github.gekomad.ittocsv.parser.IttoCSVFormat.tab.withIgnoreEmptyLines(true)
 
     import com.github.gekomad.ittocsv.core.Conversions.fromStringToLocalDateTime
 
@@ -24,7 +24,7 @@ class ReadFromFileTest extends munit.FunSuite {
         LocalDateTime.parse(s, java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
       List(
-        Right(Bar(UUID.fromString("1cc3ccbb-c749-3078-e050-1aacbe064651"), "bob", getDate("2018-11-20T09:10:25"))),
+        Right(Bar(UUID.fromString("1cc3ccbb-c749-3078-e050-1aacbe064651"), "bob ", getDate("2018-11-20T09:10:25"))),
         Right(Bar(UUID.fromString("3cc3ccbb-c749-3078-e050-1aacbe064653"), "alice", getDate("2018-11-20T10:12:24"))),
         Right(Bar(UUID.fromString("4cc3ccbb-c749-3078-e050-1aacbe064654"), "jim", getDate("2018-11-20T11:18:17"))),
         Right(Bar(UUID.fromString("5cc3ccbb-c749-3078-e050-1aacbe064655"), "tom", getDate("2018-11-20T11:36:04")))
@@ -64,7 +64,7 @@ class ReadFromFileTest extends munit.FunSuite {
           LocalDateTime.parse(s, java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
         List(
-          Right(Bar(UUID.fromString("1cc3ccbb-c749-3078-e050-1aacbe064651"), "bob", getDate("2018-11-20T09:10:25"))),
+          Right(Bar(UUID.fromString("1cc3ccbb-c749-3078-e050-1aacbe064651"), "bob ", getDate("2018-11-20T09:10:25"))),
           Right(Bar(UUID.fromString("3cc3ccbb-c749-3078-e050-1aacbe064653"), "alice", getDate("2018-11-20T10:12:24"))),
           Left(NonEmptyList(ParseFailure("xxx is not UUID"), Nil)),
           Right(Bar(UUID.fromString("5cc3ccbb-c749-3078-e050-1aacbe064655"), "tom", getDate("2018-11-20T11:36:04")))
@@ -89,6 +89,34 @@ class ReadFromFileTest extends munit.FunSuite {
         }
       }
     }
+  }
+  test("read from file trim") {
+
+    import com.github.gekomad.ittocsv.parser.io.FromFile.csvFromFileUnsafe
+    implicit val csvFormat = com.github.gekomad.ittocsv.parser.IttoCSVFormat.tab.withIgnoreEmptyLines(true).withTrim(true)
+
+    import com.github.gekomad.ittocsv.core.Conversions.fromStringToLocalDateTime
+
+    final case class Bar(id: UUID, name: String, date: LocalDateTime)
+
+    val resList: List[Right[ParseFailure, Bar]] = {
+      def getDate(s: String): LocalDateTime =
+        LocalDateTime.parse(s, java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+
+      List(
+        Right(Bar(UUID.fromString("1cc3ccbb-c749-3078-e050-1aacbe064651"), "bob", getDate("2018-11-20T09:10:25"))),
+        Right(Bar(UUID.fromString("3cc3ccbb-c749-3078-e050-1aacbe064653"), "alice", getDate("2018-11-20T10:12:24"))),
+        Right(Bar(UUID.fromString("4cc3ccbb-c749-3078-e050-1aacbe064654"), "jim", getDate("2018-11-20T11:18:17"))),
+        Right(Bar(UUID.fromString("5cc3ccbb-c749-3078-e050-1aacbe064655"), "tom", getDate("2018-11-20T11:36:04")))
+      )
+    }
+
+    {
+      val path = getClass.getResource("/csv_with_header.csv").getPath
+      val list: Try[List[Either[NonEmptyList[ParseFailure], Bar]]] = csvFromFileUnsafe[Bar](path, skipHeader = true)
+      assert(list.isSuccess && list.get == resList)
+    }
+
   }
 
 }

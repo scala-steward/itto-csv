@@ -48,6 +48,7 @@ object FromFile:
         .readAll(fs2.io.file.Path(filePath))
         .through(text.utf8.decode)
         .through(text.lines)
+        .filter(line => !csvFormat.ignoreEmptyLines || line.nonEmpty)
         .map(line => fromCsv[A](line).head)
     if (skipHeader) x.drop(1) else x
   }

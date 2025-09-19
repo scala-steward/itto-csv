@@ -87,7 +87,8 @@ object FromCsv {
             case None => Left(NonEmptyList(ParseFailure(s"$csvList is not a valid csv string"), Nil))
             case Some(t) =>
               val schema                 = Schema.of[A]
-              val p: Map[String, String] = fieldNames[A].zip(t).toMap
+              val y = if (csvFormat.trim) t.map(_.trim) else t
+              val p: Map[String, String] = fieldNames[A].zip(y).toMap
               schema.readFrom(p).toEither
           }
       }

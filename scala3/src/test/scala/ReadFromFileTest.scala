@@ -11,7 +11,8 @@ class ReadFromFileTest extends munit.FunSuite:
   test("readFromFile") {
     import com.github.gekomad.ittocsv.parser.io.FromFile.csvFromFileUnsafe
 
-    given IttoCSVFormat = IttoCSVFormat.tab
+    given IttoCSVFormat = IttoCSVFormat.tab.withIgnoreEmptyLines(true)
+
     final case class Bar(id: UUID, name: String, date: LocalDateTime)
 
     val resList: List[Right[String, Bar]] = {
@@ -19,7 +20,7 @@ class ReadFromFileTest extends munit.FunSuite:
         LocalDateTime.parse(s, java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
       List(
-        Right(Bar(UUID.fromString("1cc3ccbb-c749-3078-e050-1aacbe064651"), "bob", getDate("2018-11-20T09:10:25"))),
+        Right(Bar(UUID.fromString("1cc3ccbb-c749-3078-e050-1aacbe064651"), "bob ", getDate("2018-11-20T09:10:25"))),
         Right(Bar(UUID.fromString("3cc3ccbb-c749-3078-e050-1aacbe064653"), "alice", getDate("2018-11-20T10:12:24"))),
         Right(Bar(UUID.fromString("4cc3ccbb-c749-3078-e050-1aacbe064654"), "jim", getDate("2018-11-20T11:18:17"))),
         Right(Bar(UUID.fromString("5cc3ccbb-c749-3078-e050-1aacbe064655"), "tom", getDate("2018-11-20T11:36:04")))
@@ -27,7 +28,7 @@ class ReadFromFileTest extends munit.FunSuite:
     }
 
     {
-      val path                                       = getClass.getResource("/csv_with_header.csv").getPath
+      val path = getClass.getResource("/csv_with_header.csv").getPath
       val list: Try[List[Either[List[String], Bar]]] = csvFromFileUnsafe[Bar](path, skipHeader = true)
       assert(list.isSuccess && list.get == resList)
     }
@@ -67,7 +68,7 @@ class ReadFromFileTest extends munit.FunSuite:
       }
 
       val path = getClass.getResource("/csv_with_error.csv").getPath
-      val res  = csvFromFileUnsafe[Bar](path, skipHeader = true)
+      val res = csvFromFileUnsafe[Bar](path, skipHeader = true)
 
       assert(res == Success(errList))
       // read from file - unsafe mode
@@ -78,15 +79,41 @@ class ReadFromFileTest extends munit.FunSuite:
             case Success(a) =>
               a.map {
                 case Right(rr) => rr
-                case Left(rr)  => throw new Exception(rr.mkString)
+                case Left(rr) => throw new Exception(rr.mkString)
               }
         }
       }
       a match
         case Failure(a) => assert(a.getMessage == "xxx value is not valid UUID")
-        case _          => assert(false)
+        case _ => assert(false)
 
     }
+  }
+
+  test("readFromFile trim") {
+    import com.github.gekomad.ittocsv.parser.io.FromFile.csvFromFileUnsafe
+
+    given IttoCSVFormat = IttoCSVFormat.tab.withIgnoreEmptyLines(true).withTrim(true)
+    final case class Bar(id: UUID, name: String, date: LocalDateTime)
+
+    val resList: List[Right[String, Bar]] = {
+      def getDate(s: String): LocalDateTime =
+        LocalDateTime.parse(s, java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+
+      List(
+        Right(Bar(UUID.fromString("1cc3ccbb-c749-3078-e050-1aacbe064651"), "bob", getDate("2018-11-20T09:10:25"))),
+        Right(Bar(UUID.fromString("3cc3ccbb-c749-3078-e050-1aacbe064653"), "alice", getDate("2018-11-20T10:12:24"))),
+        Right(Bar(UUID.fromString("4cc3ccbb-c749-3078-e050-1aacbe064654"), "jim", getDate("2018-11-20T11:18:17"))),
+        Right(Bar(UUID.fromString("5cc3ccbb-c749-3078-e050-1aacbe064655"), "tom", getDate("2018-11-20T11:36:04")))
+      )
+    }
+
+    {
+      val path                                       = getClass.getResource("/csv_with_header.csv").getPath
+      val list: Try[List[Either[List[String], Bar]]] = csvFromFileUnsafe[Bar](path, skipHeader = true)
+      assert(list.isSuccess && list.get == resList)
+    }
+
   }
 
 end ReadFromFileTest

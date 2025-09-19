@@ -1,17 +1,17 @@
 name := "itto-csv"
 
-version      := "2.1.2"
+version      := "2.1.3"
 organization := "com.github.gekomad"
 
-scalaVersion := "3.5.2"
+scalaVersion := "3.3.7"
 
-val fs2Version = "3.11.0"
+val fs2Version = "3.13.0"
 
-libraryDependencies += "com.github.gekomad" %% "scala-regex-collection" % "2.0.1"
+libraryDependencies += "com.github.gekomad" %% "scala-regex-collection" % "2.0.2"
 libraryDependencies += "co.fs2"             %% "fs2-core"               % fs2Version
 libraryDependencies += "co.fs2"             %% "fs2-io"                 % fs2Version
-libraryDependencies += "org.apache.commons"  % "commons-csv"            % "1.13.0" % Test
-libraryDependencies += "org.scalameta"      %% "munit"                  % "1.1.0"  % Test
+libraryDependencies += "org.apache.commons"  % "commons-csv"            % "1.14.1" % Test
+libraryDependencies += "org.scalameta"      %% "munit"                  % "1.2.4"  % Test
 
 scalacOptions ++= Seq(
   "-encoding",
@@ -32,8 +32,9 @@ scalacOptions ++= Seq(
 )
 
 //sonatype
-publishTo := sonatypePublishToBundle.value
-
+import xerial.sbt.Sonatype._
+sonatypeCredentialHost := "central.sonatype.com"
+sonatypeRepository     := "https://central.sonatype.com/api/v1/publisher"
 
 pomExtra :=
   <licenses>

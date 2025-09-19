@@ -99,7 +99,6 @@ class WriteToFileTest extends munit.FunSuite:
 
     import com.github.gekomad.ittocsv.parser.io.ToFile.csvToFileStream
     given IttoCSVFormat = IttoCSVFormat.tab.withPrintHeader(true).withRecordSeparator("\n")
-    import com.github.gekomad.ittocsv.core.ToCsv.*
 
     def getDate(s: String): LocalDateTime =
       LocalDateTime.parse(s, java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME)

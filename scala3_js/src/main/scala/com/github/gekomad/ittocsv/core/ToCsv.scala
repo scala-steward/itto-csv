@@ -189,7 +189,8 @@ object ToCsv:
       case p: Product => p.productIterator.map(flatTuple).foldLeft(EmptyTuple: Tuple)(_ ++ _)
       case a          => Tuple1(a)
 
-    val tuple = flatTuple(Tuple.fromProductTyped(a)).toList
+    val l     = flatTuple(Tuple.fromProductTyped(a))
+    val tuple = l.toList
     tuple.map(a => StringToCsvField.stringToCsvField(a.toString)).mkString(csvFormat.delimeter.toString)
   }
 

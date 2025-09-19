@@ -1,4 +1,4 @@
-name      := "itto-csv"
+name := "itto-csv"
 
 import org.scalajs.linker.interface.{ESVersion, ModuleSplitStyle}
 
@@ -6,8 +6,8 @@ lazy val scala3Js = project
   .in(file("."))
   .enablePlugins(ScalaJSPlugin)
   .settings(
-    version                         := "2.1.2",
-    scalaVersion                    := "3.5.2",
+    version                         := "2.1.3",
+    scalaVersion                    := "3.3.7",
     organization                    := "com.github.gekomad",
     scalaJSUseMainModuleInitializer := false,
     scalaJSLinkerConfig ~= (_.withESFeatures(_.withESVersion(ESVersion.ES2018))),
@@ -16,16 +16,18 @@ lazy val scala3Js = project
         .withModuleSplitStyle(ModuleSplitStyle.SmallModulesFor(List("scala3Js")))
     },
     scalacOptions ++= Seq("-Xfatal-warnings"),
-    libraryDependencies += "co.fs2"             %%% "fs2-core"               % "3.11.0",
-    libraryDependencies += "co.fs2"             %%% "fs2-io"                 % "3.11.0",
-    libraryDependencies += "com.github.gekomad" %%% "scala-regex-collection" % "2.0.1",
-    libraryDependencies += "org.scala-js"       %%% "scalajs-dom"            % "2.8.0",
-    libraryDependencies += "org.scalameta"      %%% "munit"                  % "1.1.0"  % Test,
+    libraryDependencies += "co.fs2"             %%% "fs2-core"               % "3.13.0",
+    libraryDependencies += "co.fs2"             %%% "fs2-io"                 % "3.13.0",
+    libraryDependencies += "com.github.gekomad" %%% "scala-regex-collection" % "2.0.2",
+    libraryDependencies += "org.scala-js"       %%% "scalajs-dom"            % "2.8.1",
+    libraryDependencies += "org.scalameta"      %%% "munit"                  % "1.2.4"  % Test,
     libraryDependencies += "org.scalacheck"     %%% "scalacheck"             % "1.18.1" % Test
   )
 
 //sonatype
-publishTo := sonatypePublishToBundle.value
+import xerial.sbt.Sonatype._
+sonatypeCredentialHost := "central.sonatype.com"
+sonatypeRepository     := "https://central.sonatype.com/api/v1/publisher"
 
 pomExtra :=
   <licenses>

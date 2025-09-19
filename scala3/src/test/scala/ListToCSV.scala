@@ -6,7 +6,7 @@ class ListToCSV extends munit.FunSuite:
 
     import com.github.gekomad.ittocsv.core.ToCsv.*
     given IttoCSVFormat = IttoCSVFormat.default
-    import com.github.gekomad.ittocsv.core.Header.*
+
     case class Bar(a: String, b: Int)
     val a = List(Bar("Bar", 42), Bar("Foo", 24))
 

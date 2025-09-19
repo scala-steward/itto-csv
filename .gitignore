@@ -1,5 +1,4 @@
 **/logs/*
-project/project
 **/target/*
 */tmp/*
 dist
@@ -10,12 +9,9 @@ dist
 /out
 /.idea_modules
 /.classpath
-/.project
 /RUNNING_PID
 /.settings
 ojdbc6.jar
 .pid
 .attach_pid*
 .bsp
-scala2/project/
-scala3/project/
